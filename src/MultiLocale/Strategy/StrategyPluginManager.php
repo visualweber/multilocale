@@ -33,19 +33,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @author      Visual Weber <contact@visualweber.com>
- * @copyright   2016 Visual Weber http://visualweber.com.
+ * @copyright   2016 Visual Weber.
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
 
-namespace MultiLocale\Plugin\Exception;
+namespace MultiLocale\Strategy;
 
-use InvalidArgumentException;
-use MultiLocale\Exception\ExceptionInterface;
+use Zend\ServiceManager\AbstractPluginManager;
 
-class InvalidPluginException
-    extends InvalidArgumentException
-    implements ExceptionInterface
+class StrategyPluginManager extends AbstractPluginManager
 {
+    /**
+     * {@inheritDocs}
+     */
+    protected $invokableClasses = array(
+        'cookie'         => 'MultiLocale\Strategy\CookieStrategy',
+        'host'           => 'MultiLocale\Strategy\HostStrategy',
+        'acceptlanguage' => 'MultiLocale\Strategy\HttpAcceptLanguageStrategy',
+        'query'          => 'MultiLocale\Strategy\QueryStrategy',
+        'uripath'        => 'MultiLocale\Strategy\UriPathStrategy',
+    );
 
+    /**
+     * Validate the plugin
+     *
+     * Checks that the helper loaded is an instance of StrategyInterface.
+     *
+     * @param  mixed                            $plugin
+     * @return void
+     * @throws Exception\InvalidStrategyException if invalid
+     */
+    public function validatePlugin($plugin)
+    {
+        if ($plugin instanceof StrategyInterface) {
+            // we're okay
+            return;
+        }
+
+        throw new Exception\InvalidStrategyException(sprintf(
+            'Plugin of type %s is invalid; must implement %s\StrategyInterface',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            __NAMESPACE__
+        ));
+    }
 }

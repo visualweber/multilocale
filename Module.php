@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -41,17 +40,20 @@
 
 namespace MultiLocale;
 
-use Locale,
-    Zend\ModuleManager\Feature,
-    Zend\EventManager\EventInterface,
-    Zend\Mvc\MvcEvent,
-    Zend\Stdlib\ResponseInterface,
-    Zend\Validator\AbstractValidator;
+use Locale;
+
+use Zend\ModuleManager\Feature;
+use Zend\EventManager\EventInterface;
+use Zend\Mvc\MvcEvent;
+use Zend\Stdlib\ResponseInterface;
 
 class Module implements
-Feature\AutoloaderProviderInterface, Feature\ConfigProviderInterface, Feature\BootstrapListenerInterface {
-
-    public function getAutoloaderConfig() {
+    Feature\AutoloaderProviderInterface,
+    Feature\ConfigProviderInterface,
+    Feature\BootstrapListenerInterface
+{
+    public function getAutoloaderConfig()
+    {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -61,18 +63,20 @@ Feature\AutoloaderProviderInterface, Feature\ConfigProviderInterface, Feature\Bo
         );
     }
 
-    public function getConfig() {
+    public function getConfig()
+    {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function onBootstrap(EventInterface $e) {
+    public function onBootstrap(EventInterface $e)
+    {
         $app = $e->getApplication();
-        $serviceManager = $app->getServiceManager();
+        $sm  = $app->getServiceManager();
 
-        $detector = $serviceManager->get('MultiLocale\Locale\Detector');
-        $locale = $detector->detect($app->getRequest(), $app->getResponse());
+        $detector = $sm->get('MultiLocale\Locale\Detector');
+        $result   = $detector->detect($app->getRequest(), $app->getResponse());
 
-        if ($locale instanceof ResponseInterface) {
+        if ($result instanceof ResponseInterface) {
             /**
              * When the detector returns a response, a strategy has updated the response
              * to reflect the found locale.
@@ -83,32 +87,13 @@ Feature\AutoloaderProviderInterface, Feature\ConfigProviderInterface, Feature\Bo
              *
              * The listener is attached at PHP_INT_MAX to return the response as early as
              * possible.
-             *
-             * 
-             * Note: ZF2 only supports the underscore, like en_GB
-             * en-gb : United Kingdom (English)
-             * en-us : United States (English)
-             * 
              */
             $em = $app->getEventManager();
-            $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($locale) {
-                return $locale;
+            $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($result) {
+                return $result;
             }, PHP_INT_MAX);
         }
 
-        // $locale retrieves  lanaguages in a en-GB manner, but ZF2 only supports the underscore, like en_GB
-        $language = str_replace('-', '_', $locale);
-        echo '<pre>';
-        print_R($language);
-        echo '</pre>';
-
-        $translator = $serviceManager->get('translator'); // im using service alias 'translator' instead of 'MvcTranslator'
-        $translator
-                ->setLocale($language)
-                ->setFallbackLocale('vi_VN'); // Make sure that our fallback has been set in case we could not find a locale
-        AbstractValidator::setDefaultTranslator($translator);
-
-        Locale::setDefault($locale);
+        Locale::setDefault($result);
     }
-
 }

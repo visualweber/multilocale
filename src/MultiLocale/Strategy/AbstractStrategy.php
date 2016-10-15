@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -46,8 +45,8 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\Http\Request as HttpRequest;
 use Zend\Stdlib\RequestInterface;
 
-abstract class AbstractStrategy implements StrategyInterface {
-
+abstract class AbstractStrategy implements StrategyInterface
+{
     /**
      * Listeners we've registered
      *
@@ -61,10 +60,11 @@ abstract class AbstractStrategy implements StrategyInterface {
      * @param EventManagerInterface $events
      * @param int                   $priority
      */
-    public function attach(EventManagerInterface $events, $priority = 1) {
-        $this->listeners[] = $events->attach(LocaleEvent::EVENT_DETECT, array($this, 'detect'), $priority);
-        $this->listeners[] = $events->attach(LocaleEvent::EVENT_FOUND, array($this, 'found'), $priority);
-        $this->listeners[] = $events->attach(LocaleEvent::EVENT_ASSEMBLE, array($this, 'assemble'), $priority);
+    public function attach(EventManagerInterface $events, $priority = 1)
+    {
+        $this->listeners[] = $events->attach(LocaleEvent::EVENT_DETECT,    array($this, 'detect'), $priority);
+        $this->listeners[] = $events->attach(LocaleEvent::EVENT_FOUND,     array($this, 'found'),  $priority);
+        $this->listeners[] = $events->attach(LocaleEvent::EVENT_ASSEMBLE,  array($this, 'assemble'),  $priority);
     }
 
     /**
@@ -72,28 +72,29 @@ abstract class AbstractStrategy implements StrategyInterface {
      *
      * @param EventManagerInterface $events
      */
-    public function detach(EventManagerInterface $events) {
-        foreach ($this->listeners as $index => $listener):
-            if ($events->detach($listener)):
+    public function detach(EventManagerInterface $events)
+    {
+        foreach ($this->listeners as $index => $listener) {
+            if ($events->detach($listener)) {
                 unset($this->listeners[$index]);
-            endif;
-        endforeach;
+            }
+        }
     }
 
-    public function detect(LocaleEvent $event) {
-        
+    public function detect(LocaleEvent $event)
+    {
     }
 
-    public function found(LocaleEvent $event) {
-        
+    public function found(LocaleEvent $event)
+    {
     }
 
-    public function assemble(LocaleEvent $event) {
-        
+    public function assemble(LocaleEvent $event)
+    {
     }
 
-    protected function isHttpRequest(RequestInterface $request) {
+    protected function isHttpRequest(RequestInterface $request)
+    {
         return $request instanceof HttpRequest;
     }
-
 }

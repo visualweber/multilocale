@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -43,8 +42,8 @@ namespace MultiLocale\Strategy;
 
 use MultiLocale\LocaleEvent;
 
-class QueryStrategy extends AbstractStrategy {
-
+class QueryStrategy extends AbstractStrategy
+{
     /**
      * Default query key
      *
@@ -59,16 +58,18 @@ class QueryStrategy extends AbstractStrategy {
      */
     protected $query_key;
 
-    public function setOptions(array $options = array()) {
+    public function setOptions(array $options = array())
+    {
         if (array_key_exists('query_key', $options)) {
             $this->query_key = (string) $options['query_key'];
         }
     }
 
-    protected function getQueryKey() {
-        if (null === $this->query_key):
+    protected function getQueryKey()
+    {
+        if (null === $this->query_key) {
             $this->query_key = self::QUERY_KEY;
-        endif;
+        }
 
         return $this->query_key;
     }
@@ -76,24 +77,25 @@ class QueryStrategy extends AbstractStrategy {
     /**
      * {@inheritdoc }
      */
-    public function detect(LocaleEvent $event) {
+    public function detect(LocaleEvent $event)
+    {
         $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)) :
+        if (!$this->isHttpRequest($request)) {
             return;
-        endif;
+        }
 
-        if (!$event->hasSupported()) :
+        if (!$event->hasSupported()) {
             return;
-        endif;
+        }
 
         $locale = $request->getQuery($this->getQueryKey());
-        if ($locale === null) :
+        if ($locale === null) {
             return;
-        endif;
+        }
 
-        if (!in_array($locale, $event->getSupported())) :
+        if (!in_array($locale, $event->getSupported())) {
             return;
-        endif;
+        }
 
         return $locale;
     }
@@ -101,17 +103,17 @@ class QueryStrategy extends AbstractStrategy {
     /**
      * {@inheritdoc}
      */
-    public function assemble(LocaleEvent $event) {
-        $uri = $event->getUri();
-        $locale = $event->getLocale();
+    public function assemble(LocaleEvent $event)
+    {
+        $uri     = $event->getUri();
+        $locale  = $event->getLocale();
 
         $query = $uri->getQueryAsArray();
-        $key = $this->getQueryKey();
+        $key   = $this->getQueryKey();
 
         $query[$key] = $locale;
 
         $uri->setQuery($query);
         return $uri;
     }
-
 }

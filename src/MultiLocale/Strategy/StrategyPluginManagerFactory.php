@@ -6,12 +6,12 @@
  * and open the template in the editor.
  */
 
-namespace MultiLocale\Plugin;
+namespace MultiLocale\Strategy;
 
 use Zend\Mvc\Service\AbstractPluginManagerFactory;
 
-class PluginManagerFactory extends AbstractPluginManagerFactory {
+class StrategyPluginManagerFactory extends AbstractPluginManagerFactory {
 
-    const PLUGIN_MANAGER_CLASS = 'MultiLocale\Plugin\PluginManager';
+    const PLUGIN_MANAGER_CLASS = 'MultiLocale\Strategy\StrategyPluginManager';
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -46,10 +45,10 @@ use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;
 use Zend\Uri\Uri;
 
-class LocaleEvent extends Event {
-
-    const EVENT_DETECT = 'detect';
-    const EVENT_FOUND = 'found';
+class LocaleEvent extends Event
+{
+    const EVENT_DETECT   = 'detect';
+    const EVENT_FOUND    = 'found';
     const EVENT_ASSEMBLE = 'assemble';
 
     protected $request;
@@ -58,45 +57,54 @@ class LocaleEvent extends Event {
     protected $locale;
     protected $uri;
 
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
-    public function setRequest(RequestInterface $request) {
+    public function setRequest(RequestInterface $request)
+    {
         $this->setParam('request', $request);
         $this->request = $request;
         return $this;
     }
 
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
-    public function setResponse(ResponseInterface $response) {
+    public function setResponse(ResponseInterface $response)
+    {
         $this->setParam('response', $response);
         $this->response = $response;
         return $this;
     }
 
-    public function getSupported() {
+    public function getSupported()
+    {
         return $this->supported;
     }
 
-    public function setSupported(array $supported) {
+    public function setSupported(array $supported)
+    {
         $this->setParam('supported', $supported);
         $this->supported = $supported;
         return $this;
     }
 
-    public function hasSupported() {
+    public function hasSupported()
+    {
         return is_array($this->supported) && count($this->supported);
     }
 
-    public function getLocale() {
+    public function getLocale()
+    {
         return $this->locale;
     }
 
-    public function setLocale($locale) {
+    public function setLocale($locale)
+    {
         $this->setParam('locale', $locale);
         $this->locale = $locale;
         return $this;
@@ -107,7 +115,8 @@ class LocaleEvent extends Event {
      *
      * @return Uri
      */
-    public function getUri() {
+    public function getUri()
+    {
         return $this->uri;
     }
 
@@ -117,10 +126,10 @@ class LocaleEvent extends Event {
      * @param  Uri $uri
      * @return self
      */
-    public function setUri(Uri $uri) {
+    public function setUri(Uri $uri)
+    {
         $this->setParam('uri', $uri);
         $this->uri = $uri;
         return $this;
     }
-
 }

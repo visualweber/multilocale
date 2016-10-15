@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -49,8 +48,8 @@ use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;
 use Zend\Uri\Uri;
 
-class Detector implements EventManagerAwareInterface {
-
+class Detector implements EventManagerAwareInterface
+{
     /**
      * Event manager holding the different strategies
      *
@@ -72,11 +71,13 @@ class Detector implements EventManagerAwareInterface {
      */
     protected $supported;
 
-    public function getEventManager() {
+    public function getEventManager()
+    {
         return $this->events;
     }
 
-    public function setEventManager(EventManagerInterface $events) {
+    public function setEventManager(EventManagerInterface $events)
+    {
         $events->setIdentifiers(array(
             __CLASS__,
             get_called_class()
@@ -86,58 +87,65 @@ class Detector implements EventManagerAwareInterface {
         return $this;
     }
 
-    public function addStrategy(StrategyInterface $strategy, $priority = 1) {
+    public function addStrategy(StrategyInterface $strategy, $priority = 1)
+    {
         $this->getEventManager()->attachAggregate($strategy, $priority);
     }
 
-    public function getDefault() {
+    public function getDefault()
+    {
         return $this->default;
     }
 
-    public function setDefault($default) {
+    public function setDefault($default)
+    {
         $this->default = $default;
         return $this;
     }
 
-    public function getSupported() {
+    public function getSupported()
+    {
         return $this->supported;
     }
 
-    public function setSupported(array $supported) {
+    public function setSupported(array $supported)
+    {
         $this->supported = $supported;
         return $this;
     }
 
-    public function hasSupported() {
+    public function hasSupported()
+    {
         return (is_array($this->supported) && count($this->supported));
     }
 
-    public function detect(RequestInterface $request, ResponseInterface $response = null) {
+    public function detect(RequestInterface $request, ResponseInterface $response = null)
+    {
         $event = new LocaleEvent(LocaleEvent::EVENT_DETECT, $this);
         $event->setRequest($request);
         $event->setResponse($response);
 
-        if ($this->hasSupported()):
+        if ($this->hasSupported()) {
             $event->setSupported($this->getSupported());
-        endif;
+        }
 
-        $events = $this->getEventManager();
+        $events  = $this->getEventManager();
         $results = $events->trigger($event, function($r) {
             return is_string($r);
         });
 
-        if ($results->stopped()):
+        if ($results->stopped()) {
             $locale = $results->last();
-        else:
+        } else {
             $locale = $this->getDefault();
-        endif;
+        }
 
-        if ($this->hasSupported() && !in_array($locale, $this->getSupported())):
+        if ($this->hasSupported() && !in_array($locale, $this->getSupported())) {
             $locale = $this->getDefault();
-        endif;
+        }
 
         // Trigger FOUND event only when a response is given
-        if ($response instanceof ResponseInterface):
+        if ($response instanceof ResponseInterface) {
             $event->setName(LocaleEvent::EVENT_FOUND);
             $event->setLocale($locale);
 
@@ -150,20 +158,21 @@ class Detector implements EventManagerAwareInterface {
              * instead of the locale.
              */
             $events->trigger($event, function ($r) use (&$return) {
-                if ($r instanceof ResponseInterface):
+                if ($r instanceof ResponseInterface) {
                     $return = true;
-                endif;
+                }
             });
 
-            if ($return):
+            if ($return) {
                 return $response;
-            endif;
-        endif;
+            }
+        }
 
         return $locale;
     }
 
-    public function assemble($locale, $uri, RequestInterface $request) {
+    public function assemble($locale, $uri, RequestInterface $request)
+    {
         $event = new LocaleEvent(LocaleEvent::EVENT_ASSEMBLE, $this);
         $event->setLocale($locale);
         $event->setRequest($request);
@@ -177,7 +186,7 @@ class Detector implements EventManagerAwareInterface {
         }
         $event->setUri($uri);
 
-        $events = $this->getEventManager();
+        $events  = $this->getEventManager();
         $results = $events->trigger($event);
         if (!$results->stopped()) {
             return $uri;
@@ -185,5 +194,4 @@ class Detector implements EventManagerAwareInterface {
 
         return $results->last();
     }
-
 }

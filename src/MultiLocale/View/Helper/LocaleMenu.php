@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -46,8 +45,8 @@ use MultiLocale\Locale\Detector;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Exception\RuntimeException;
 
-class LocaleMenu extends AbstractHelper {
-
+class LocaleMenu extends AbstractHelper
+{
     /**
      * @var Detector $detector
      */
@@ -98,21 +97,24 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @param Detector $detector
      */
-    public function setDetector($detector) {
+    public function setDetector($detector)
+    {
         $this->detector = $detector;
     }
 
     /**
      * @return Detector $detector
      */
-    public function getDetector() {
+    public function getDetector()
+    {
         return $this->detector;
     }
 
     /**
      * @param string $class
      */
-    public function setUlClass($class) {
+    public function setUlClass($class)
+    {
         $this->class = $class;
         return $this;
     }
@@ -120,14 +122,16 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return string
      */
-    public function getUlClass() {
+    public function getUlClass()
+    {
         return $this->class;
     }
 
     /**
-     * @param string $titleMethod
+     * @param string $itemTitleMethod
      */
-    public function setTitleMethod($titleMethod) {
+    public function setTitleMethod($titleMethod)
+    {
         $this->checkLocaleMethod($titleMethod);
 
         $this->titleMethod = $titleMethod;
@@ -137,14 +141,16 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return string
      */
-    public function getTitleMethod() {
+    public function getTitleMethod()
+    {
         return $this->titleMethod;
     }
 
     /**
      * @param boolean $flag
      */
-    public function setTitleInCurrentLocale($flag) {
+    public function setTitleInCurrentLocale($flag)
+    {
         $this->titleInCurrentLocale = (bool) $flag;
         return $this;
     }
@@ -152,14 +158,16 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return boolean
      */
-    public function getTitleInCurrentLocale() {
+    public function getTitleInCurrentLocale()
+    {
         return $this->titleInCurrentLocale;
     }
 
     /**
      * @param string $labelMethod
      */
-    public function setLabelMethod($labelMethod) {
+    public function setLabelMethod($labelMethod)
+    {
         $this->checkLocaleMethod($labelMethod);
 
         $this->labelMethod = $labelMethod;
@@ -169,14 +177,16 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return string
      */
-    public function getLabelMethod() {
+    public function getLabelMethod()
+    {
         return $this->labelMethod;
     }
 
     /**
      * @param boolean $flag
      */
-    public function setLabelInCurrentLocale($flag) {
+    public function setLabelInCurrentLocale($flag)
+    {
         $this->labelInCurrentLocale = (bool) $flag;
         return $this;
     }
@@ -184,14 +194,16 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return boolean
      */
-    public function getLabelInCurrentLocale() {
+    public function getLabelInCurrentLocale()
+    {
         return $this->labelInCurrentLocale;
     }
 
     /**
      * @param boolean $omitCurrent
      */
-    public function setOmitCurrent($omitCurrent) {
+    public function setOmitCurrent($omitCurrent)
+    {
         $this->omitCurrent = (bool) $omitCurrent;
         return $this;
     }
@@ -199,11 +211,13 @@ class LocaleMenu extends AbstractHelper {
     /**
      * @return boolean
      */
-    public function omitCurrent() {
+    public function omitCurrent()
+    {
         return $this->omitCurrent;
     }
 
-    public function __invoke() {
+    public function __invoke()
+    {
         return $this;
     }
 
@@ -213,35 +227,42 @@ class LocaleMenu extends AbstractHelper {
      * @throws RuntimeException
      * @todo implement add way to completely default rendering for maximum flexibility (see Zend\View\Helper\Navigation::renderPartial)
      */
-    public function __toString() {
-        if (!($detector = $this->getDetector())):
+    public function __toString()
+    {
+        if (!($detector = $this->getDetector())) {
             throw new RuntimeException('To assemble an url, a detector is required');
-        endif;
+        }
 
-        $list = '';
-        $current = Locale::getDefault();
-        foreach ($detector->getSupported() as $locale):
-            if ($this->omitCurrent() && $current === $locale):
+        $list     = '';
+        $current  = Locale::getDefault();
+        foreach($detector->getSupported() as $locale) {
+            if ($this->omitCurrent() && $current === $locale) {
                 continue;
-            endif;
+            }
 
             $titleLocale = $this->getTitleInCurrentLocale() ? $locale : $current;
             $labelLocale = $this->getLabelInCurrentLocale() ? $locale : $current;
 
-            $url = $this->getView()->localeUrl($locale);
+            $url   = $this->getView()->localeUrl($locale);
             $title = $this->getLocaleProperty($this->getTitleMethod(), $locale, $titleLocale);
             $label = $this->getLocaleProperty($this->getLabelMethod(), $locale, $labelLocale);
 
             $item = sprintf(
-                    '<li class="language"><a href="%s" title="%s"%s>%s</a></li>' . "\n", $url, $title, ($current === $locale) ? ' class="active"' : '', $label
+                '<li><a href="%s" title="%s"%s>%s</a></li>' . "\n",
+                $url,
+                $title,
+                ($current === $locale) ? ' class="active"' : '',
+                $label
             );
 
             $list .= $item;
-        endforeach;
+        }
 
         $class = $this->getUlClass();
-        $html = sprintf(
-                '<ul%s>%s</ul>', ($class) ? sprintf(' class="%s"', $class) : '', $list
+        $html  = sprintf(
+            '<ul%s>%s</ul>',
+            ($class) ? sprintf(' class="%s"', $class) : '',
+            $list
         );
 
         return $html;
@@ -254,7 +275,8 @@ class LocaleMenu extends AbstractHelper {
      * @throws RuntimeException If method is not part of locale
      * @return true
      */
-    protected function checkLocaleMethod($method) {
+    protected function checkLocaleMethod($method)
+    {
         $options = array(
             'displayLanguage',
             'displayName',
@@ -266,11 +288,13 @@ class LocaleMenu extends AbstractHelper {
             'script'
         );
 
-        if (!in_array($method, $options)):
+        if (!in_array($method, $options)) {
             throw new RuntimeException(sprintf(
-                    'Unknown method "%s" for Locale, expecting one of these: %s.', $method, implode(', ', $options)
+                'Unknown method "%s" for Locale, expecting one of these: %s.',
+                $method,
+                implode(', ', $options)
             ));
-        endif;
+        }
     }
 
     /**
@@ -281,16 +305,16 @@ class LocaleMenu extends AbstractHelper {
      * @param bool $in_locale
      * @return mixed
      */
-    protected function getLocaleProperty($property, $locale, $in_locale = false) {
+    protected function getLocaleProperty($property, $locale, $in_locale = false)
+    {
         $callback = sprintf('\Locale::get%s', ucfirst($property));
 
         $args = array($locale);
 
-        if ($in_locale && !in_array($property, array('primaryLanguage', 'region', 'script'))):
+        if ($in_locale && !in_array($property, array('primaryLanguage', 'region', 'script'))) {
             $args[] = $in_locale;
-        endif;
+        }
 
         return call_user_func_array($callback, $args);
     }
-
 }

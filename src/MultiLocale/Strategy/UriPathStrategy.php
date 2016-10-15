@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -48,8 +47,8 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\Uri\Uri;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 
-class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInterface {
-
+class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInterface
+{
     const REDIRECT_STATUS_CODE = 302;
 
     protected $redirect_when_found = true;
@@ -57,111 +56,120 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
     protected $redirect_to_canonical;
     protected $sl;
 
-    public function setOptions(array $options = array()) {
-        if (array_key_exists('redirect_when_found', $options)):
+    public function setOptions(array $options = array())
+    {
+        if (array_key_exists('redirect_when_found', $options)) {
             $this->redirect_when_found = (bool) $options['redirect_when_found'];
-        endif;
-        if (array_key_exists('aliases', $options)):
+        }
+        if (array_key_exists('aliases', $options)) {
             $this->aliases = (array) $options['aliases'];
-        endif;
-        if (array_key_exists('redirect_to_canonical', $options)):
+        }
+        if (array_key_exists('redirect_to_canonical', $options)) {
             $this->redirect_to_canonical = (bool) $options['redirect_to_canonical'];
-        endif;
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setServiceLocator(ServiceLocatorInterface $sl) {
+    public function setServiceLocator(ServiceLocatorInterface $sl)
+    {
         $this->sl = $sl;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getServiceLocator() {
+    public function getServiceLocator()
+    {
         return $this->sl;
     }
 
-    protected function getRouter() {
+    protected function getRouter()
+    {
         return $this->getServiceLocator()->getServiceLocator()->get('router');
     }
 
-    protected function redirectWhenFound() {
+    protected function redirectWhenFound()
+    {
         return $this->redirect_when_found;
     }
 
-    protected function getAliases() {
+    protected function getAliases()
+    {
         return $this->aliases;
     }
 
-    protected function redirectToCanonical() {
+    protected function redirectToCanonical()
+    {
         return $this->redirect_to_canonical;
     }
 
-    public function detect(LocaleEvent $event) {
+    public function detect(LocaleEvent $event)
+    {
         $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)) :
+        if (!$this->isHttpRequest($request)) {
             return;
-        endif;
+        }
 
-        $base = $this->getBasePath();
+        $base   = $this->getBasePath();
         $locale = $this->getFirstSegmentInPath($request->getUri(), $base);
-        if (!$locale) :
+        if (!$locale) {
             return;
-        endif;
+        }
 
         $aliases = $this->getAliases();
-        if (null !== $aliases && array_key_exists($locale, $aliases)) :
+        if (null !== $aliases && array_key_exists($locale, $aliases)) {
             $locale = $aliases[$locale];
-        endif;
+        }
 
-        if (!$event->hasSupported() || !in_array($locale, $event->getSupported())) :
+        if (!$event->hasSupported() || !in_array($locale, $event->getSupported())) {
             return;
-        endif;
+        }
 
         return $locale;
     }
 
-    public function found(LocaleEvent $event) {
+    public function found(LocaleEvent $event)
+    {
         $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)):
+        if (!$this->isHttpRequest($request)) {
             return;
-        endif;
+        }
 
         $locale = $event->getLocale();
-        if (null === $locale):
+        if (null === $locale) {
             return;
-        endif;
+        }
 
-        if (!$this->redirectToCanonical() && null !== $this->getAliases()) :
+        if (!$this->redirectToCanonical() && null !== $this->getAliases()) {
             $alias = $this->getAliasForLocale($locale);
-            if (null !== $alias) :
+            if (null !== $alias) {
                 $locale = $alias;
-            endif;
-        endif;
+            }
+        }
 
 
-        $base = $this->getBasePath();
+        $base  = $this->getBasePath();
         $found = $this->getFirstSegmentInPath($request->getUri(), $base);
 
         $this->getRouter()->setBaseUrl($base . '/' . $locale);
-        if ($locale === $found) :
+        if ($locale === $found) {
             return;
-        endif;
+        }
 
-        if (!$this->redirectWhenFound()) :
+        if (!$this->redirectWhenFound()) {
             return;
-        endif;
+        }
 
-        $uri = $request->getUri();
+        $uri  = $request->getUri();
         $path = $uri->getPath();
 
-        if (!$found || ($event->hasSupported() && !in_array($found, $event->getSupported()))):
+        if (!$found || ($event->hasSupported() && !in_array($found, $event->getSupported()))) {
             $path = '/' . $locale . $path;
-        else:
+        } else {
             $path = str_replace($found, $locale, $path);
-        endif;
+        }
 
         $uri->setPath($path);
 
@@ -172,31 +180,32 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
         return $response;
     }
 
-    public function assemble(LocaleEvent $event) {
-        $uri = $event->getUri();
-        $base = $this->getBasePath();
-        $locale = $event->getLocale();
+    public function assemble(LocaleEvent $event)
+    {
+        $uri     = $event->getUri();
+        $base    = $this->getBasePath();
+        $locale  = $event->getLocale();
 
         $current = $this->getFirstSegmentInPath($uri, $base);
 
-        if (!$this->redirectToCanonical() && null !== $this->getAliases()) :
+        if (!$this->redirectToCanonical() && null !== $this->getAliases()) {
             $alias = $this->getAliasForLocale($locale);
-            if (null !== $alias) :
+            if (null !== $alias) {
                 $locale = $alias;
-            endif;
-        endif;
+            }
+        }
 
         $path = $uri->getPath();
 
         // Last part of base is now always locale, remove that
         $parts = explode('/', trim($base, '/'));
         array_pop($parts);
-        $base = implode('/', $parts);
+        $base  = implode('/', $parts);
 
-        if ($base):
+        if ($base) {
             $path = substr($path, strlen($base));
-        endif;
-        $parts = explode('/', trim($path, '/'));
+        }
+        $parts  = explode('/', trim($path, '/'));
 
         // Remove first part
         array_shift($parts);
@@ -207,35 +216,37 @@ class UriPathStrategy extends AbstractStrategy implements ServiceLocatorAwareInt
         return $uri;
     }
 
-    protected function getFirstSegmentInPath(Uri $uri, $base = null) {
+    protected function getFirstSegmentInPath(Uri $uri, $base = null)
+    {
         $path = $uri->getPath();
 
-        if ($base):
+        if ($base) {
             $path = substr($path, strlen($base));
-        endif;
+        }
 
-        $parts = explode('/', trim($path, '/'));
+        $parts  = explode('/', trim($path, '/'));
         $locale = array_shift($parts);
 
         return $locale;
     }
 
-    protected function getAliasForLocale($locale) {
-        foreach ($this->getAliases() as $alias => $item):
-            if ($item === $locale):
+    protected function getAliasForLocale($locale)
+    {
+        foreach ($this->getAliases() as $alias => $item) {
+            if ($item === $locale) {
                 return $alias;
-            endif;
-        endforeach;
+            }
+        }
     }
 
-    protected function getBasePath() {
-        $base = null;
+    protected function getBasePath()
+    {
+        $base   = null;
         $router = $this->getRouter();
-        if ($router instanceof TreeRouteStack):
+        if ($router instanceof TreeRouteStack) {
             $base = $router->getBaseUrl();
-        endif;
+        }
 
         return $base;
     }
-
 }
