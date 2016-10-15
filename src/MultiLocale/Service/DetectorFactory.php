@@ -59,6 +59,10 @@ class DetectorFactory implements FactoryInterface {
         $events = $serviceLocator->get('EventManager');
         $detector->setEventManager($events);
 
+        echo '<pre>';
+        print_R(get_class_methods($serviceLocator));
+        echo '</pre>';
+        
         // $this->addStrategies($detector, $config['strategies'], $serviceLocator);
         $plugins = $serviceLocator->get('MultiLocale\Strategy\StrategyPluginManager');
         foreach ($config['strategies'] as $strategy):
