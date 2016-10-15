@@ -45,11 +45,11 @@ return array(
 
     'service_manager' => array(
         'invokables' => array(
-            'MultiLocale\Strategy\StrategyPluginManager' => 'MultiLocale\Strategy\AbstractPluginManagerFactory',
+            'MultiLocale\Strategy\AbstractPluginManager' => 'MultiLocale\Strategy\AbstractPluginManager',
         ),
         'factories'  => array(
             'MultiLocale\Locale\Detector' => 'MultiLocale\Service\DetectorFactory',
-            // 'MultiLocale\Strategy\StrategyPluginManagerFactory' => 'MultiLocale\Strategy\StrategyPluginManagerFactory'
+            'MultiLocale\Strategy\StrategyPluginManagerFactory' => 'MultiLocale\Strategy\StrategyPluginManagerFactory'
         ),
     ),
 

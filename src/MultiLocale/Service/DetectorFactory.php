@@ -59,17 +59,12 @@ class DetectorFactory implements FactoryInterface {
         $events = $serviceLocator->get('EventManager');
         $detector->setEventManager($events);
 
-        echo '<pre>';
-        print_R(get_class_methods($serviceLocator));
-        echo '</pre>';
-        
-        // $this->addStrategies($detector, $config['strategies'], $serviceLocator);
-        $plugins = $serviceLocator->get('MultiLocale\Strategy\StrategyPluginManager');
+        $plugins = $serviceLocator->get('MultiLocale\Strategy\StrategyPluginManagerFactory');
         foreach ($config['strategies'] as $strategy):
-            if (is_string($strategy)) {
+            if (is_string($strategy)):
                 $class = $plugins->get($strategy);
                 $detector->addStrategy($class);
-            } elseif (is_array($strategy)) {
+            elseif (is_array($strategy)):
                 $name = $strategy['name'];
                 $class = $plugins->get($name);
 
@@ -78,25 +73,25 @@ class DetectorFactory implements FactoryInterface {
                 }
 
                 $priority = 1;
-                if (array_key_exists('priority', $strategy)) {
+                if (array_key_exists('priority', $strategy)):
                     $priority = $strategy['priority'];
-                }
+                endif;
 
                 $detector->addStrategy($class, $priority);
-            } else {
+            else:
                 throw new Exception\StrategyConfigurationException(
                 'Strategy configuration must be a string or an array'
                 );
-            }
+            endif;
         endforeach;
 
-        if (array_key_exists('default', $config)) {
+        if (array_key_exists('default', $config)):
             $detector->setDefault($config['default']);
-        }
+        endif;
 
-        if (array_key_exists('supported', $config)) {
+        if (array_key_exists('supported', $config)):
             $detector->setSupported($config['supported']);
-        }
+        endif;
 
         return $detector;
     }
