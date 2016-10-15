@@ -168,20 +168,20 @@ class Detector implements EventManagerAwareInterface {
         $event->setLocale($locale);
         $event->setRequest($request);
 
-        if ($this->hasSupported()) {
+        if ($this->hasSupported()):
             $event->setSupported($this->getSupported());
-        }
+        endif;
 
-        if (!$uri instanceof Uri) {
+        if (!$uri instanceof Uri):
             $uri = new Uri($uri);
-        }
+        endif;
         $event->setUri($uri);
 
         $events = $this->getEventManager();
         $results = $events->trigger($event);
-        if (!$results->stopped()) {
+        if (!$results->stopped()):
             return $uri;
-        }
+        endif;
 
         return $results->last();
     }
