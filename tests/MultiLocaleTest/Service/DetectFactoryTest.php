@@ -98,7 +98,7 @@ class DetectorFactoryTest extends TestCase
 
         $self    = $this;
         $called  = false;
-        $plugins = $sl->get('MultiLocale\Strategy\PluginManager');
+        $plugins = $sl->get('MultiLocale\Plugin\PluginManager');
         $plugins->setFactory('TestStrategy', function() use ($self, &$called) {
             $called = true;
             return $self->getMock('MultiLocale\Strategy\StrategyInterface');
@@ -116,7 +116,7 @@ class DetectorFactoryTest extends TestCase
 
         $self    = $this;
         $called1 = false;
-        $plugins = $sl->get('MultiLocale\Strategy\PluginManager');
+        $plugins = $sl->get('MultiLocale\Plugin\PluginManager');
         $plugins->setFactory('TestStrategy1', function() use ($self, &$called1) {
             $called1 = true;
             return $self->getMock('MultiLocale\Strategy\StrategyInterface');
@@ -143,7 +143,7 @@ class DetectorFactoryTest extends TestCase
 
         $self    = $this;
         $called  = false;
-        $plugins = $sl->get('MultiLocale\Strategy\PluginManager');
+        $plugins = $sl->get('MultiLocale\Plugin\PluginManager');
         $plugins->setFactory('TestStrategy', function() use ($self, &$called) {
             $called = true;
             return $self->getMock('MultiLocale\Strategy\StrategyInterface');
@@ -166,7 +166,7 @@ class DetectorFactoryTest extends TestCase
         $strategy->expects($this->once())
                  ->method('attach')
                  ->with($em, 100);
-        $plugins = $sl->get('MultiLocale\Strategy\PluginManager');
+        $plugins = $sl->get('MultiLocale\Plugin\PluginManager');
         $plugins->setService('TestStrategy', $strategy);
 
         $detector = $sl->get('MultiLocale\Locale\Detector');
@@ -183,7 +183,7 @@ class DetectorFactoryTest extends TestCase
         $strategy->expects($this->once())
                  ->method('setOptions')
                  ->with('Foo');
-        $plugins = $sl->get('MultiLocale\Strategy\PluginManager');
+        $plugins = $sl->get('MultiLocale\Plugin\PluginManager');
         $plugins->setService('TestStrategy', $strategy);
 
         $detector = $sl->get('MultiLocale\Locale\Detector');
@@ -198,7 +198,7 @@ class DetectorFactoryTest extends TestCase
         );
         $serviceLocator = new ServiceManager;
         $serviceLocator->setFactory('MultiLocale\Locale\Detector', 'MultiLocale\Service\DetectorFactory');
-        $serviceLocator->setInvokableClass('MultiLocale\Strategy\PluginManager', 'MultiLocale\Strategy\PluginManager');
+        $serviceLocator->setInvokableClass('MultiLocale\Plugin\PluginManager', 'MultiLocale\Plugin\PluginManager');
         $serviceLocator->setService('EventManager', new EventManager);
         $serviceLocator->setService('config', $config);
 

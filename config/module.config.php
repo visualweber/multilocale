@@ -45,7 +45,7 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-//            'MultiLocale\Strategy\AbstractPluginManager' => 'MultiLocale\Strategy\AbstractPluginManager',
+            'MultiLocale\Plugin\PluginManager' => 'MultiLocale\Plugin\PluginManager',
         ],
         'factories' => [
             'MultiLocale\Locale\Detector' => 'MultiLocale\Service\DetectorFactory',
