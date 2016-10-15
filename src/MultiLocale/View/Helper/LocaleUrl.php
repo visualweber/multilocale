@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -37,6 +38,7 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
+
 namespace MultiLocale\View\Helper;
 
 use MultiLocale\Locale\Detector;
@@ -45,13 +47,12 @@ use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Exception\RuntimeException;
 
-class LocaleUrl extends AbstractHelper
-{
+class LocaleUrl extends AbstractHelper {
+
     /**
      * @var Detector $detector
      */
     protected $detector;
-
     protected $match;
 
     /**
@@ -59,25 +60,21 @@ class LocaleUrl extends AbstractHelper
      */
     protected $request;
 
-    public function __construct(Detector $detector, Request $request, Routematch $match = null)
-    {
+    public function __construct(Detector $detector, Request $request, Routematch $match = null) {
         $this->detector = $detector;
-        $this->match    = $match;
-        $this->request  = $request;
+        $this->match = $match;
+        $this->request = $request;
     }
 
-    protected function getDetector()
-    {
+    protected function getDetector() {
         return $this->detector;
     }
 
-    protected function getRouteMatch()
-    {
+    protected function getRouteMatch() {
         return $this->match;
     }
 
-    protected function getRequest()
-    {
+    protected function getRequest() {
         return $this->request;
     }
 
@@ -95,27 +92,25 @@ class LocaleUrl extends AbstractHelper
      * @throws Exception\RuntimeException  If no RouteMatch was provided
      * @throws Exception\RuntimeException  If RouteMatch didn't contain a matched route name
      */
-    public function __invoke($locale, $name = null, $params = array(), $options = array(), $reuseMatchedParams = true)
-    {
-        if (!$this->getDetector()) {
+    public function __invoke($locale, $name = null, $params = [], $options = [], $reuseMatchedParams = true) {
+        if (!$this->getDetector()):
             throw new RuntimeException('To assemble an url, a detector is required');
-        }
+        endif;
 
         /**
          * With a route match, we can use the url view helper to assemble a new url. If no
          * route match is present, we've a 404 and grab the path from the request object.
          */
-        if ($this->getRouteMatch()) {
-
-            if (!isset($options['locale'])) {
+        if ($this->getRouteMatch()):
+            if (!isset($options['locale'])) :
                 $options['locale'] = $locale;
-            }
-
+            endif;
             $url = $this->getView()->url($name, $params, $options, $reuseMatchedParams);
-        } else {
+        else:
             $url = $this->getRequest()->getUri()->getPath();
-        }
+        endif;
 
         return $this->getDetector()->assemble($locale, $url, $this->getRequest());
     }
+
 }

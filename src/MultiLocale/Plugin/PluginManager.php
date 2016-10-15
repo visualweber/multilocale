@@ -39,39 +39,41 @@
  * @link        http://visualweber.com
  */
 
-namespace MultiLocale\Strategy;
+namespace MultiLocale\Plugin;
 
-use Locale;
-use MultiLocale\LocaleEvent;
+use Zend\ServiceManager\AbstractPluginManager;
 
-class HttpAcceptLanguageStrategy extends AbstractStrategy {
+class PluginManager extends AbstractPluginManager {
 
-    public function detect(LocaleEvent $event) {
-        $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)):
+    /**
+     * {@inheritDocs}
+     */
+    protected $invokableClasses = array(
+        'cookie' => 'MultiLocale\Strategy\CookieStrategy',
+        'host' => 'MultiLocale\Strategy\HostStrategy',
+        'acceptlanguage' => 'MultiLocale\Strategy\HttpAcceptLanguageStrategy',
+        'query' => 'MultiLocale\Strategy\QueryStrategy',
+        'uripath' => 'MultiLocale\Strategy\UriPathStrategy',
+    );
+
+    /**
+     * Validate the plugin
+     *
+     * Checks that the helper loaded is an instance of StrategyInterface.
+     *
+     * @param  mixed                            $plugin
+     * @return void
+     * @throws Exception\InvalidPluginException if invalid
+     */
+    public function validatePlugin($plugin) {
+        if ($plugin instanceof StrategyInterface):
+            // we're okay
             return;
         endif;
 
-        if ($lookup = $event->hasSupported()):
-            $supported = $event->getSupported();
-        endif;
-
-        $headers = $request->getHeaders();
-        if ($headers->has('Accept-Language')):
-            $locales = $headers->get('Accept-Language')->getPrioritized();
-
-            foreach ($locales as $locale) :
-                $locale = $locale->getLanguage();
-
-                if (!$lookup) :
-                    return $locale;
-                endif;
-
-                if ($match = Locale::lookup($supported, $locale)):
-                    return $match;
-                endif;
-            endforeach;
-        endif;
+        throw new Exception\InvalidPluginException(sprintf(
+                'Plugin of type %s is invalid; must implement %s\StrategyInterface', (is_object($plugin) ? get_class($plugin) : gettype($plugin)), __NAMESPACE__
+        ));
     }
 
 }

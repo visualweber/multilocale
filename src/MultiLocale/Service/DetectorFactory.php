@@ -59,7 +59,7 @@ class DetectorFactory implements FactoryInterface {
         $events = $serviceLocator->get('EventManager');
         $detector->setEventManager($events);
 
-        $plugins = $serviceLocator->get('MultiLocale\Strategy\StrategyPluginManagerFactory');
+        $plugins = $serviceLocator->get('MultiLocale\Plugin\PluginManagerFactory');
         foreach ($config['strategies'] as $strategy):
             if (is_string($strategy)):
                 $class = $plugins->get($strategy);
@@ -68,9 +68,9 @@ class DetectorFactory implements FactoryInterface {
                 $name = $strategy['name'];
                 $class = $plugins->get($name);
 
-                if (array_key_exists('options', $strategy) && method_exists($class, 'setOptions')) {
+                if (array_key_exists('options', $strategy) && method_exists($class, 'setOptions')):
                     $class->setOptions($strategy['options']);
-                }
+                endif;
 
                 $priority = 1;
                 if (array_key_exists('priority', $strategy)):

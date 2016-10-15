@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -40,20 +41,17 @@
 
 namespace MultiLocale;
 
-use Locale;
-
-use Zend\ModuleManager\Feature;
-use Zend\EventManager\EventInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Stdlib\ResponseInterface;
+use Locale,
+    Zend\ModuleManager\Feature,
+    Zend\EventManager\EventInterface,
+    Zend\Mvc\MvcEvent,
+    Zend\Stdlib\ResponseInterface,
+    Zend\Validator\AbstractValidator;
 
 class Module implements
-    Feature\AutoloaderProviderInterface,
-    Feature\ConfigProviderInterface,
-    Feature\BootstrapListenerInterface
-{
-    public function getAutoloaderConfig()
-    {
+Feature\AutoloaderProviderInterface, Feature\ConfigProviderInterface, Feature\BootstrapListenerInterface {
+
+    public function getAutoloaderConfig() {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -63,20 +61,18 @@ class Module implements
         );
     }
 
-    public function getConfig()
-    {
+    public function getConfig() {
         return include __DIR__ . '/config/module.config.php';
     }
 
-    public function onBootstrap(EventInterface $e)
-    {
+    public function onBootstrap(EventInterface $e) {
         $app = $e->getApplication();
-        $sm  = $app->getServiceManager();
+        $serviceManager = $app->getServiceManager();
 
-        $detector = $sm->get('MultiLocale\Locale\Detector');
-        $result   = $detector->detect($app->getRequest(), $app->getResponse());
+        $detector = $serviceManager->get('MultiLocale\Locale\Detector');
+        $locale = $detector->detect($app->getRequest(), $app->getResponse());
 
-        if ($result instanceof ResponseInterface) {
+        if ($locale instanceof ResponseInterface) {
             /**
              * When the detector returns a response, a strategy has updated the response
              * to reflect the found locale.
@@ -87,13 +83,32 @@ class Module implements
              *
              * The listener is attached at PHP_INT_MAX to return the response as early as
              * possible.
+             *
+             * 
+             * Note: ZF2 only supports the underscore, like en_GB
+             * en-gb : United Kingdom (English)
+             * en-us : United States (English)
+             * 
              */
             $em = $app->getEventManager();
-            $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($result) {
-                return $result;
+            $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($locale) {
+                return $locale;
             }, PHP_INT_MAX);
         }
 
-        Locale::setDefault($result);
+        // $locale retrieves  lanaguages in a en-GB manner, but ZF2 only supports the underscore, like en_GB
+        $language = str_replace('-', '_', $locale);
+        echo '<pre>';
+        print_R($language);
+        echo '</pre>';
+
+        $translator = $serviceManager->get('translator'); // im using service alias 'translator' instead of 'MvcTranslator'
+        $translator
+                ->setLocale($language)
+                ->setFallbackLocale('vi_VN'); // Make sure that our fallback has been set in case we could not find a locale
+        AbstractValidator::setDefaultTranslator($translator);
+
+        Locale::setDefault($locale);
     }
+
 }

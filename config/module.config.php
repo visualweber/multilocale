@@ -38,17 +38,18 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
+
 return [
     'multi_locale' => [
         'strategies' => [],
     ],
     'service_manager' => [
         'invokables' => [
-            'MultiLocale\Strategy\AbstractPluginManager' => 'MultiLocale\Strategy\AbstractPluginManager',
+//            'MultiLocale\Strategy\AbstractPluginManager' => 'MultiLocale\Strategy\AbstractPluginManager',
         ],
         'factories' => [
             'MultiLocale\Locale\Detector' => 'MultiLocale\Service\DetectorFactory',
-            'MultiLocale\Strategy\StrategyPluginManagerFactory' => 'MultiLocale\Strategy\StrategyPluginManagerFactory'
+            'MultiLocale\Plugin\PluginManagerFactory' => 'MultiLocale\Plugin\PluginManagerFactory'
         ],
     ],
     'view_helpers' => [

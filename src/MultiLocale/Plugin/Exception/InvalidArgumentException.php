@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -34,44 +33,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @author      Visual Weber <contact@visualweber.com>
- * @copyright   2016 Visual Weber.
+ * @copyright   2016 Visual Weber http://visualweber.com.
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
 
-namespace MultiLocale\Strategy;
+namespace MultiLocale\Plugin\Exception;
 
-use Locale;
-use MultiLocale\LocaleEvent;
+use InvalidArgumentException as StdInvalidArgumentException;
+use MultiLocale\Exception\ExceptionInterface;
 
-class HttpAcceptLanguageStrategy extends AbstractStrategy {
-
-    public function detect(LocaleEvent $event) {
-        $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)):
-            return;
-        endif;
-
-        if ($lookup = $event->hasSupported()):
-            $supported = $event->getSupported();
-        endif;
-
-        $headers = $request->getHeaders();
-        if ($headers->has('Accept-Language')):
-            $locales = $headers->get('Accept-Language')->getPrioritized();
-
-            foreach ($locales as $locale) :
-                $locale = $locale->getLanguage();
-
-                if (!$lookup) :
-                    return $locale;
-                endif;
-
-                if ($match = Locale::lookup($supported, $locale)):
-                    return $match;
-                endif;
-            endforeach;
-        endif;
-    }
+class InvalidArgumentException
+    extends StdInvalidArgumentException
+    implements ExceptionInterface
+{
 
 }
