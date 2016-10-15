@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -37,30 +38,27 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
-
-return array(
-    'multi_locale' => array(
-        'strategies' => array()
-    ),
-
-    'service_manager' => array(
-        'invokables' => array(
+return [
+    'multi_locale' => [
+        'strategies' => [],
+    ],
+    'service_manager' => [
+        'invokables' => [
             'MultiLocale\Strategy\AbstractPluginManager' => 'MultiLocale\Strategy\AbstractPluginManager',
-        ),
-        'factories'  => array(
+        ],
+        'factories' => [
             'MultiLocale\Locale\Detector' => 'MultiLocale\Service\DetectorFactory',
             'MultiLocale\Strategy\StrategyPluginManagerFactory' => 'MultiLocale\Strategy\StrategyPluginManagerFactory'
-        ),
-    ),
-
-    'view_helpers' => array(
-        'aliases' => array(
-            'localeUrl'  => 'MultiLocale\View\Helper\LocaleUrl',
+        ],
+    ],
+    'view_helpers' => [
+        'aliases' => [
+            'localeUrl' => 'MultiLocale\View\Helper\LocaleUrl',
             'localeMenu' => 'MultiLocale\View\Helper\LocaleMenu',
-        ),
-        'factories' => array(
-            'MultiLocale\View\Helper\LocaleUrl'  => 'MultiLocale\Service\LocaleUrlViewHelperFactory',
+        ],
+        'factories' => [
+            'MultiLocale\View\Helper\LocaleUrl' => 'MultiLocale\Service\LocaleUrlViewHelperFactory',
             'MultiLocale\View\Helper\LocaleMenu' => 'MultiLocale\Service\LocaleMenuViewHelperFactory',
-        ),
-    ),
-);
+        ],
+    ],
+];
