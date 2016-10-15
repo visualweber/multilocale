@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -44,22 +45,45 @@ use MultiLocale\Locale\Detector;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class DetectorFactory implements FactoryInterface
-{
+class DetectorFactory implements FactoryInterface {
+
     /**
      * @param  ServiceLocatorInterface $serviceLocator
      * @return Detector
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
+    public function createService(ServiceLocatorInterface $serviceLocator) {
         $config = $serviceLocator->get('config');
         $config = $config['multi_locale'];
 
         $detector = new Detector;
-        $events   = $serviceLocator->get('EventManager');
+        $events = $serviceLocator->get('EventManager');
         $detector->setEventManager($events);
 
-        $this->addStrategies($detector, $config['strategies'], $serviceLocator);
+        // $this->addStrategies($detector, $config['strategies'], $serviceLocator);
+        foreach ($config['strategies'] as $strategy):
+            if (is_string($strategy)) {
+                $class = $plugins->get($strategy);
+                $detector->addStrategy($class);
+            } elseif (is_array($strategy)) {
+                $name = $strategy['name'];
+                $class = $plugins->get($name);
+
+                if (array_key_exists('options', $strategy) && method_exists($class, 'setOptions')) {
+                    $class->setOptions($strategy['options']);
+                }
+
+                $priority = 1;
+                if (array_key_exists('priority', $strategy)) {
+                    $priority = $strategy['priority'];
+                }
+
+                $detector->addStrategy($class, $priority);
+            } else {
+                throw new Exception\StrategyConfigurationException(
+                'Strategy configuration must be a string or an array'
+                );
+            }
+        endforeach;
 
         if (array_key_exists('default', $config)) {
             $detector->setDefault($config['default']);
@@ -72,35 +96,4 @@ class DetectorFactory implements FactoryInterface
         return $detector;
     }
 
-    protected function addStrategies(Detector $detector, array $strategies, ServiceLocatorInterface $serviceLocator)
-    {
-        $plugins = $serviceLocator->get('MultiLocale\Strategy\StrategyPluginManager');
-
-        foreach ($strategies as $strategy) {
-            if (is_string($strategy)) {
-                $class = $plugins->get($strategy);
-                $detector->addStrategy($class);
-
-            } elseif (is_array($strategy)) {
-                $name     = $strategy['name'];
-                $class    = $plugins->get($name);
-
-                if (array_key_exists('options', $strategy) && method_exists($class, 'setOptions')) {
-                    $class->setOptions($strategy['options']);
-                }
-
-                $priority = 1;
-                if (array_key_exists('priority', $strategy)) {
-                    $priority = $strategy['priority'];
-                }
-
-                $detector->addStrategy($class, $priority);
-
-            } else {
-                throw new Exception\StrategyConfigurationException(
-                    'Strategy configuration must be a string or an array'
-                );
-            }
-        }
-    }
 }
