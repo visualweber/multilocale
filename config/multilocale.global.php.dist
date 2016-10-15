@@ -42,5 +42,5 @@ $settings = array(
  * You do not need to edit below this line
  */
 return array(
-    'slm_locale' => $settings
+    'multi_locale' => $settings
 );

@@ -47,7 +47,7 @@ use Zend\Http\Header\SetCookie;
 
 class CookieStrategy extends AbstractStrategy
 {
-    const COOKIE_NAME = 'slm_locale';
+    const COOKIE_NAME = 'multi_locale';
 
     /**
      * The name of the cookie.

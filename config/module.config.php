@@ -39,7 +39,7 @@
  */
 
 return array(
-    'slm_locale' => array(
+    'multi_locale' => array(
         'strategies' => array()
     ),
 

@@ -1,7 +1,7 @@
 MultiLocale
 ===
 [![Build Status](https://travis-ci.org/visualweber/MultiLocale.png)](https://travis-ci.org/visualweber/MultiLocale)
-[![Latest Stable Version](https://poser.pugx.org/slm/locale/v/stable.png)](https://packagist.org/packages/slm/locale)
+[![Latest Stable Version](https://poser.pugx.org/visualweber/multilocale/v/stable.png)](https://packagist.org/packages/visualweber/multilocale)
 
 Created by Visual Weber
 
@@ -31,7 +31,7 @@ Furthermore, it provides a set of additional localisation features:
 
 Installation
 ---
-Add "slm/locale" to your composer.json file and update your dependencies. Enable
+Add "visualweber/multilocale" to your composer.json file and update your dependencies. Enable
 MultiLocale in your `application.config.php`.
 
 If you do not have a composer.json file in the root of your project, copy the
@@ -41,7 +41,7 @@ the root of your project:
 ```
 {
     "require": {
-        "slm/locale": ">=0.1.0,<1.2.0-dev"
+        "visualweber/multilocale": ">=0.1.0,<1.2.0-dev"
     }
 }
 ```
@@ -53,7 +53,7 @@ curl -s http://getcomposer.org/installer | php
 php composer.phar install
 ```
 
-Now you should have a `vendor` directory, including a `slm/locale`. In your
+Now you should have a `vendor` directory, including a `visualweber/multilocale`. In your
 bootstrap code, make sure you include the `vendor/autoload.php` file to properly
 load the MultiLocale module.
 
@@ -62,7 +62,7 @@ Usage
 Set your default locale in the configuration:
 
 ```
-'slm_locale' => array(
+'multi_locale' => array(
     'default' => 'nl-NL',
 ),
 ```
@@ -70,7 +70,7 @@ Set your default locale in the configuration:
 Set all your supported locales in the configuration:
 
 ```
-'slm_locale' => array(
+'multi_locale' => array(
     'supported' => array('en-US', 'en-GB'),
 ),
 ```
@@ -87,7 +87,7 @@ You can enable one or more of them in the `strategies` list. Mind the priority
 is important! You usually want the `acceptlanguage` as last for a fallback:
 
 ```
-'slm_locale' => array(
+'multi_locale' => array(
     'strategies' => array('uripath', 'acceptlanguage'),
 ),
 ```

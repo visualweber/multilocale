@@ -192,7 +192,7 @@ class DetectorFactoryTest extends TestCase
     public function getServiceLocator(array $config = array())
     {
         $config = array(
-            'slm_locale' => $config + array(
+            'multi_locale' => $config + array(
                 'strategies' => array()
             ),
         );

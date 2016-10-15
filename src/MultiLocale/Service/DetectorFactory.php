@@ -53,7 +53,7 @@ class DetectorFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('config');
-        $config = $config['slm_locale'];
+        $config = $config['multi_locale'];
 
         $detector = new Detector;
         $events   = $serviceLocator->get('EventManager');
