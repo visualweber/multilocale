@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -43,9 +44,6 @@ namespace MultiLocale\Strategy\Exception;
 use InvalidArgumentException;
 use MultiLocale\Exception\ExceptionInterface;
 
-class InvalidStrategyException
-    extends InvalidArgumentException
-    implements ExceptionInterface
-{
-
+class InvalidStrategyException extends InvalidArgumentException implements ExceptionInterface {
+    
 }

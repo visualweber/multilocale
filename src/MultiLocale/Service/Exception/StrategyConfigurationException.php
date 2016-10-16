@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -43,8 +44,6 @@ namespace MultiLocale\Service\Exception;
 use RuntimeException;
 use MultiLocale\Exception\ExceptionInterface;
 
-class StrategyConfigurationException
-    extends RuntimeException
-    implements ExceptionInterface
-{
+class StrategyConfigurationException extends RuntimeException implements ExceptionInterface {
+    
 }

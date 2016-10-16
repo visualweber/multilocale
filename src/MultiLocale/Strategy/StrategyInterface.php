@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -42,6 +43,6 @@ namespace MultiLocale\Strategy;
 
 use Zend\EventManager\ListenerAggregateInterface;
 
-interface StrategyInterface extends ListenerAggregateInterface
-{
+interface StrategyInterface extends ListenerAggregateInterface {
+    
 }

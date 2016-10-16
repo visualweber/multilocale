@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -40,7 +41,6 @@
 
 namespace MultiLocale\Exception;
 
-interface ExceptionInterface
-{
-
+interface ExceptionInterface {
+    
 }

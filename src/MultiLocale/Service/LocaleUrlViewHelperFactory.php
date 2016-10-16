@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -44,22 +45,22 @@ use MultiLocale\View\Helper\LocaleUrl;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LocaleUrlViewHelperFactory implements FactoryInterface
-{
+class LocaleUrlViewHelperFactory implements FactoryInterface {
+
     /**
      * @param  ServiceLocatorInterface $serviceLocator
      * @return LocaleUrl
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
+    public function createService(ServiceLocatorInterface $serviceLocator) {
         $sl = $serviceLocator->getServiceLocator();
 
         $detector = $sl->get('MultiLocale\Locale\Detector');
-        $request  = $sl->get('Request');
-        $app      = $sl->get('Application');
+        $request = $sl->get('Request');
+        $app = $sl->get('Application');
 
-        $match  = $app->getMvcEvent()->getRouteMatch();
+        $match = $app->getMvcEvent()->getRouteMatch();
         $helper = new LocaleUrl($detector, $request, $match);
         return $helper;
     }
+
 }

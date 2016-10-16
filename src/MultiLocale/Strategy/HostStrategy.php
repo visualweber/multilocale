@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -44,115 +45,109 @@ use MultiLocale\LocaleEvent;
 use MultiLocale\Strategy\Exception\InvalidArgumentException;
 use Zend\Uri\Uri;
 
-class HostStrategy extends AbstractStrategy
-{
-    const LOCALE_KEY           = ':locale';
+class HostStrategy extends AbstractStrategy {
+
+    const LOCALE_KEY = ':locale';
     const REDIRECT_STATUS_CODE = 302;
 
     protected $domain;
     protected $aliases;
     protected $redirect_to_canonical;
 
-    public function setOptions(array $options = array())
-    {
-        if (array_key_exists('domain', $options)) {
+    public function setOptions(array $options = array()) {
+        if (array_key_exists('domain', $options)):
             $this->domain = (string) $options['domain'];
-        }
-        if (array_key_exists('aliases', $options)) {
+        endif;
+        if (array_key_exists('aliases', $options)):
             $this->aliases = (array) $options['aliases'];
-        }
-        if (array_key_exists('redirect_to_canonical', $options)) {
+        endif;
+        if (array_key_exists('redirect_to_canonical', $options)):
             $this->redirect_to_canonical = (bool) $options['redirect_to_canonical'];
-        }
+        endif;
     }
 
-    protected function getDomain()
-    {
+    protected function getDomain() {
         return $this->domain;
     }
 
-    protected function getAliases()
-    {
+    protected function getAliases() {
         return $this->aliases;
     }
 
-    protected function redirectToCanonical()
-    {
+    protected function redirectToCanonical() {
         return $this->redirect_to_canonical;
     }
 
-    public function detect(LocaleEvent $event)
-    {
+    public function detect(LocaleEvent $event) {
         $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)) {
+        if (!$this->isHttpRequest($request)):
             return;
-        }
+        endif;
 
-        if (!$event->hasSupported()) {
+        if (!$event->hasSupported()):
             return;
-        }
+        endif;
 
         $domain = $this->getDomain();
-        if (!null === $domain) {
+        if (!null === $domain):
             throw new Exception\InvalidArgumentException(
-                'The strategy must be configured with a domain option'
+            'The strategy must be configured with a domain option'
             );
-        }
-        if (strpos($domain, self::LOCALE_KEY) === false) {
+        endif;
+        if (strpos($domain, self::LOCALE_KEY) === false) :
             throw new Exception\InvalidArgumentException(sprintf(
-                'The domain %s must contain a locale key part "%s"', $domain, self::LOCALE_KEY
+                    'The domain %s must contain a locale key part "%s"', $domain, self::LOCALE_KEY
             ));
-        }
+        endif;
 
-        $host    = $request->getUri()->getHost();
+        $host = $request->getUri()->getHost();
         $pattern = str_replace(self::LOCALE_KEY, '([a-zA-Z-_.]+)', $domain);
         $pattern = sprintf('@%s@', $pattern);
-        $result  = preg_match($pattern, $host, $matches);
+        $result = preg_match($pattern, $host, $matches);
 
-        if (!$result) {
+        if (!$result):
             return;
-        }
+        endif;
 
         $locale = $matches[1];
 
         $aliases = $this->getAliases();
-        if (null !== $aliases && array_key_exists($locale, $aliases)) {
+        if (null !== $aliases && array_key_exists($locale, $aliases)):
             $locale = $aliases[$locale];
-        }
+        endif;
 
-        if (!in_array($locale, $event->getSupported())) {
+        if (!in_array($locale, $event->getSupported())) :
             return;
-        }
+        endif;
 
         return $locale;
     }
 
-    public function found(LocaleEvent $event)
-    {
+    public function found(LocaleEvent $event) {
         $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)) {
+        if (!$this->isHttpRequest($request)):
             return;
-        }
+        endif;
 
-        if (!$event->hasSupported()) {
+        if (!$event->hasSupported()):
             return;
-        }
+        endif;
 
-        $locale  = $event->getLocale();
-        if (null === $locale) {
+        $locale = $event->getLocale();
+        if (null === $locale) :
             return;
-        }
+        endif;
 
         // By default, use the alias to redirect to
-        if (!$this->redirectToCanonical()) {
+        if (!$this->redirectToCanonical()) :
             $locale = $this->getAliasForLocale($locale);
-        }
+        endif;
 
         $host = str_replace(self::LOCALE_KEY, $locale, $this->getDomain());
-        $uri  = $request->getUri();
-        if ($host === $uri->getHost()) {
+        $uri = $request->getUri();
+        if ($host === $uri->getHost()) :
             return;
-        }
+        endif;
 
         $uri->setHost($host);
 
@@ -163,42 +158,41 @@ class HostStrategy extends AbstractStrategy
         return $response;
     }
 
-    protected function getAliasForLocale($locale)
-    {
-        foreach ($this->getAliases() as $alias => $item) {
-            if ($item === $locale) {
+    protected function getAliasForLocale($locale) {
+        foreach ($this->getAliases() as $alias => $item) :
+            if ($item === $locale) :
                 return $alias;
-            }
-        }
+            endif;
+        endforeach;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function assemble(LocaleEvent $event)
-    {
+    public function assemble(LocaleEvent $event) {
         $locale = $event->getLocale();
 
-        foreach ($this->getAliases() as $alias => $item) {
-            if ($item == $locale) {
+        foreach ($this->getAliases() as $alias => $item):
+            if ($item == $locale) :
                 $tld = $alias;
-            }
-        }
+            endif;
+        endforeach;
 
-        if (!isset($tld)) {
+        if (!isset($tld)) :
             throw new InvalidArgumentException('No matching tld found for current locale');
-        }
+        endif;
 
         $port = $event->getRequest()->getServer()->get('SERVER_PORT');
         $hostname = str_replace(self::LOCALE_KEY, $tld, $this->getDomain());
 
-        if (null !== $port && 80 != $port) {
+        if (null !== $port && 80 != $port) :
             $hostname .= ':' . $port;
-        }
+        endif;
 
         $uri = $event->getUri();
         $uri->setHost($hostname);
 
         return $uri;
     }
+
 }

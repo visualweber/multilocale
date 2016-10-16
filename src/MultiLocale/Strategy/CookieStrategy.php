@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -45,8 +46,8 @@ use MultiLocale\Strategy\Exception\InvalidArgumentException;
 use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
 
-class CookieStrategy extends AbstractStrategy
-{
+class CookieStrategy extends AbstractStrategy {
+
     const COOKIE_NAME = 'multi_locale';
 
     /**
@@ -56,67 +57,62 @@ class CookieStrategy extends AbstractStrategy
      */
     protected $cookieName;
 
-    public function setOptions(array $options = array())
-    {
-        if (array_key_exists('cookie_name', $options)) {
+    public function setOptions(array $options = array()) {
+        if (array_key_exists('cookie_name', $options)):
             $this->setCookieName($options['cookie_name']);
-        }
+        endif;
     }
 
-    public function detect(LocaleEvent $event)
-    {
-        $request    = $event->getRequest();
+    public function detect(LocaleEvent $event) {
+        $request = $event->getRequest();
         $cookieName = $this->getCookieName();
 
-        if (!$this->isHttpRequest($request)) {
+        if (!$this->isHttpRequest($request)):
             return;
-        }
-        if (!$event->hasSupported()) {
+        endif;
+        if (!$event->hasSupported()):
             return;
-        }
+        endif;
 
         $cookie = $request->getCookie();
-        if (!$cookie || !$cookie->offsetExists($cookieName)) {
+        if (!$cookie || !$cookie->offsetExists($cookieName)):
             return;
-        }
+        endif;
 
-        $locale    = $cookie->offsetGet($cookieName);
+        $locale = $cookie->offsetGet($cookieName);
         $supported = $event->getSupported();
 
-        if (!in_array($locale, $supported)) {
+        if (!in_array($locale, $supported)):
             return;
-        }
+        endif;
 
         return $locale;
     }
 
-    public function found(LocaleEvent $event)
-    {
-        $locale     = $event->getLocale();
-        $request    = $event->getRequest();
+    public function found(LocaleEvent $event) {
+        $locale = $event->getLocale();
+        $request = $event->getRequest();
         $cookieName = $this->getCookieName();
 
-        if (!$this->isHttpRequest($request)) {
+        if (!$this->isHttpRequest($request)):
             return;
-        }
+        endif;
 
-        $cookie   = $request->getCookie();
+        $cookie = $request->getCookie();
 
         // Omit Set-Cookie header when cookie is present
-        if ($cookie instanceof Cookie
-            && $cookie->offsetExists($cookieName)
-            && $locale === $cookie->offsetGet($cookieName)
-        ) {
+        if ($cookie instanceof Cookie && $cookie->offsetExists($cookieName) && $locale === $cookie->offsetGet($cookieName)
+        ) :
             return;
-        }
+        endif;
 
         $path = '/';
 
-        if (method_exists($request, 'getBasePath')) {
+        if (method_exists($request, 'getBasePath')) :
             $path = rtrim($request->getBasePath(), '/') . '/';
-        }
+        endif;
 
-        $response  = $event->getResponse();
+        $response = $event->getResponse();
         $setCookie = new SetCookie($cookieName, $locale, null, $path);
 
         $response->getHeaders()->addHeader($setCookie);
@@ -125,11 +121,10 @@ class CookieStrategy extends AbstractStrategy
     /**
      * @return string
      */
-    public function getCookieName()
-    {
-        if (null === $this->cookieName) {
+    public function getCookieName() {
+        if (null === $this->cookieName):
             return self::COOKIE_NAME;
-        }
+        endif;
 
         return (string) $this->cookieName;
     }
@@ -138,12 +133,12 @@ class CookieStrategy extends AbstractStrategy
      * @param string $cookieName
      * @throws InvalidArgumentException
      */
-    public function setCookieName($cookieName)
-    {
-        if(!preg_match("/^(?!\\$)[!-~]+$/", $cookieName)) {
+    public function setCookieName($cookieName) {
+        if (!preg_match("/^(?!\\$)[!-~]+$/", $cookieName)):
             throw new InvalidArgumentException($cookieName . " is not a vaild cookie name.");
-        }
+        endif;
 
         $this->cookieName = $cookieName;
     }
+
 }

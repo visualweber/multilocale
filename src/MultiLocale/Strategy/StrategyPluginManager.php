@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -42,17 +43,17 @@ namespace MultiLocale\Strategy;
 
 use Zend\ServiceManager\AbstractPluginManager;
 
-class StrategyPluginManager extends AbstractPluginManager
-{
+class StrategyPluginManager extends AbstractPluginManager {
+
     /**
      * {@inheritDocs}
      */
     protected $invokableClasses = array(
-        'cookie'         => 'MultiLocale\Strategy\CookieStrategy',
-        'host'           => 'MultiLocale\Strategy\HostStrategy',
+        'cookie' => 'MultiLocale\Strategy\CookieStrategy',
+        'host' => 'MultiLocale\Strategy\HostStrategy',
         'acceptlanguage' => 'MultiLocale\Strategy\HttpAcceptLanguageStrategy',
-        'query'          => 'MultiLocale\Strategy\QueryStrategy',
-        'uripath'        => 'MultiLocale\Strategy\UriPathStrategy',
+        'query' => 'MultiLocale\Strategy\QueryStrategy',
+        'uripath' => 'MultiLocale\Strategy\UriPathStrategy',
     );
 
     /**
@@ -64,17 +65,15 @@ class StrategyPluginManager extends AbstractPluginManager
      * @return void
      * @throws Exception\InvalidStrategyException if invalid
      */
-    public function validatePlugin($plugin)
-    {
-        if ($plugin instanceof StrategyInterface) {
+    public function validatePlugin($plugin) {
+        if ($plugin instanceof StrategyInterface) :
             // we're okay
             return;
-        }
+        endif;
 
         throw new Exception\InvalidStrategyException(sprintf(
-            'Plugin of type %s is invalid; must implement %s\StrategyInterface',
-            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
-            __NAMESPACE__
+                'Plugin of type %s is invalid; must implement %s\StrategyInterface', (is_object($plugin) ? get_class($plugin) : gettype($plugin)), __NAMESPACE__
         ));
     }
+
 }

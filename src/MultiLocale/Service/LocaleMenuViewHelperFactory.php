@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -44,14 +45,13 @@ use MultiLocale\View\Helper\LocaleMenu;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LocaleMenuViewHelperFactory implements FactoryInterface
-{
+class LocaleMenuViewHelperFactory implements FactoryInterface {
+
     /**
      * @param  ServiceLocatorInterface $serviceLocator
      * @return LocaleMenu
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
+    public function createService(ServiceLocatorInterface $serviceLocator) {
         $detector = $serviceLocator->getServiceLocator()->get('MultiLocale\Locale\Detector');
 
         $helper = new LocaleMenu;
@@ -59,4 +59,5 @@ class LocaleMenuViewHelperFactory implements FactoryInterface
 
         return $helper;
     }
+
 }

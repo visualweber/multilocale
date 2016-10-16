@@ -93,24 +93,24 @@ class LocaleUrl extends AbstractHelper {
      * @throws Exception\RuntimeException  If RouteMatch didn't contain a matched route name
      */
     public function __invoke($locale, $name = null, $params = [], $options = [], $reuseMatchedParams = true) {
-        if (!$this->getDetector()) {
+        if (!$this->getDetector()):
             throw new RuntimeException('To assemble an url, a detector is required');
-        }
+        endif;
 
         /**
          * With a route match, we can use the url view helper to assemble a new url. If no
          * route match is present, we've a 404 and grab the path from the request object.
          */
-        if ($this->getRouteMatch()) {
+        if ($this->getRouteMatch()) :
 
-            if (!isset($options['locale'])) {
+            if (!isset($options['locale'])):
                 $options['locale'] = $locale;
-            }
+            endif;
 
             $url = $this->getView()->url($name, $params, $options, $reuseMatchedParams);
-        } else {
+        else:
             $url = $this->getRequest()->getUri()->getPath();
-        }
+        endif;
 
         return $this->getDetector()->assemble($locale, $url, $this->getRequest());
     }

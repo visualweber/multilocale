@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -43,34 +44,34 @@ namespace MultiLocale\Strategy;
 use Locale;
 use MultiLocale\LocaleEvent;
 
-class HttpAcceptLanguageStrategy extends AbstractStrategy
-{
-    public function detect(LocaleEvent $event)
-    {
-        $request = $event->getRequest();
-        if (!$this->isHttpRequest($request)) {
-            return;
-        }
+class HttpAcceptLanguageStrategy extends AbstractStrategy {
 
-        if ($lookup = $event->hasSupported()) {
+    public function detect(LocaleEvent $event) {
+        $request = $event->getRequest();
+        if (!$this->isHttpRequest($request)):
+            return;
+        endif;
+
+        if ($lookup = $event->hasSupported()):
             $supported = $event->getSupported();
-        }
+        endif;
 
         $headers = $request->getHeaders();
-        if ($headers->has('Accept-Language')) {
+        if ($headers->has('Accept-Language')):
             $locales = $headers->get('Accept-Language')->getPrioritized();
 
-            foreach ($locales as $locale) {
+            foreach ($locales as $locale):
                 $locale = $locale->getLanguage();
 
-                if (!$lookup) {
+                if (!$lookup) :
                     return $locale;
-                }
+                endif;
 
-                if ($match = Locale::lookup($supported, $locale)) {
+                if ($match = Locale::lookup($supported, $locale)):
                     return $match;
-                }
-            }
-        }
+                endif;
+            endforeach;
+        endif;
     }
+
 }
