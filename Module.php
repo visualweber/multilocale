@@ -49,6 +49,13 @@ use Locale,
     Zend\Validator\AbstractValidator;
 
 class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProviderInterface, Feature\BootstrapListenerInterface {
+    // Private storage of all our local languages
+    private $locales = [
+        'vi' => 'vi_VN', // tiếng việt
+        'en' => 'en_GB', // tiếng anh
+        'en-US' => 'en_GB' // tiếng anh
+    ];
+
 
     public function getAutoloaderConfig() {
         return [
@@ -69,6 +76,7 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
         $sm = $app->getServiceManager();
 
         $detector = $sm->get('MultiLocale\Locale\Detector');
+
         $locale = $detector->detect($app->getRequest(), $app->getResponse());
 
         if ($locale instanceof ResponseInterface):
@@ -87,6 +95,10 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
             $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($locale) {
                 return $locale;
             }, PHP_INT_MAX);
+        endif;
+        
+        if(isset($this->locales[$locale]) && $this->locales[$locale]):
+            $locale = $this->locales[$locale];
         endif;
 
         // ZF2 only supports the underscore, like en_GB
