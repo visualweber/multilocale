@@ -91,7 +91,7 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
 
         // ZF2 only supports the underscore, like en_GB
         $language = str_replace('-', '_', $locale);
-        $translator = $sm->get('translator'); // im using service alias 'translator' instead of 'MvcTranslator'
+        $translator = $sm->get('translator'); // im using service alias 'translator' (config/global.php) instead of 'MvcTranslator'
         $translator
                 ->setLocale($language)
                 ->setFallbackLocale('vi_VN'); // Make sure that our fallback has been set in case we could not find a locale
