@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2016 Visual Weber.
  * All rights reserved.
@@ -37,6 +38,7 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://visualweber.com
  */
+
 namespace MultiLocale\View\Helper;
 
 use MultiLocale\Locale\Detector;
@@ -45,13 +47,12 @@ use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Exception\RuntimeException;
 
-class LocaleUrl extends AbstractHelper
-{
+class LocaleUrl extends AbstractHelper {
+
     /**
      * @var Detector $detector
      */
     protected $detector;
-
     protected $match;
 
     /**
@@ -59,25 +60,21 @@ class LocaleUrl extends AbstractHelper
      */
     protected $request;
 
-    public function __construct(Detector $detector, Request $request, Routematch $match = null)
-    {
+    public function __construct(Detector $detector, Request $request, Routematch $match = null) {
         $this->detector = $detector;
-        $this->match    = $match;
-        $this->request  = $request;
+        $this->match = $match;
+        $this->request = $request;
     }
 
-    protected function getDetector()
-    {
+    protected function getDetector() {
         return $this->detector;
     }
 
-    protected function getRouteMatch()
-    {
+    protected function getRouteMatch() {
         return $this->match;
     }
 
-    protected function getRequest()
-    {
+    protected function getRequest() {
         return $this->request;
     }
 
@@ -95,8 +92,7 @@ class LocaleUrl extends AbstractHelper
      * @throws Exception\RuntimeException  If no RouteMatch was provided
      * @throws Exception\RuntimeException  If RouteMatch didn't contain a matched route name
      */
-    public function __invoke($locale, $name = null, $params = array(), $options = array(), $reuseMatchedParams = true)
-    {
+    public function __invoke($locale, $name = null, $params = [], $options = [], $reuseMatchedParams = true) {
         if (!$this->getDetector()) {
             throw new RuntimeException('To assemble an url, a detector is required');
         }
@@ -118,4 +114,5 @@ class LocaleUrl extends AbstractHelper
 
         return $this->getDetector()->assemble($locale, $url, $this->getRequest());
     }
+
 }
