@@ -74,6 +74,7 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
     public function onBootstrap(EventInterface $e) {
         $app = $e->getApplication();
         $sm = $app->getServiceManager();
+        $em = $app->getEventManager();
         $language = 'vi_VN';
 
         $detector = $sm->get('MultiLocale\Locale\Detector');
@@ -91,7 +92,6 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
              * The listener is attached at PHP_INT_MAX to return the response as early as
              * possible.
              */
-            $em = $app->getEventManager();
             $em->attach(MvcEvent::EVENT_ROUTE, function($e) use ($locale) {
                 return $locale;
             }, PHP_INT_MAX);
@@ -110,6 +110,14 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
         AbstractValidator::setDefaultTranslator($translator);
 
         Locale::setDefault($locale);
+
+        $em->attach(MvcEvent::EVENT_ROUTE, array($this, 'onPreRoute'), 100);
+    }
+
+    public function onPreRoute($e) {
+        $app = $e->getTarget();
+        $sm = $app->getServiceManager();
+        $sm->get('router')->setTranslator($sm->get('translator'));
     }
 
 }
