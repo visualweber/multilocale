@@ -63,7 +63,7 @@ class Detector implements EventManagerAwareInterface {
      *
      * @var string
      */
-    protected $default = 'vi';
+    protected $default = 'vi_VN';
 
     /**
      * Optional list of supported locales
