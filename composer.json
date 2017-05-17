@@ -17,17 +17,17 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3.",
+        "php": "^5.6 || ^7.0",
         "ext-intl": "*",
-        "zendframework/zend-eventmanager": "~2.1",
-        "zendframework/zend-http": "~2.1",
-        "zendframework/zend-servicemanager": "~2.1",
-        "zendframework/zend-stdlib": "~2.1"
+        "zendframework/zend-eventmanager": "dev-master",
+        "zendframework/zend-http": "dev-master",
+        "zendframework/zend-servicemanager": "dev-master",
+        "zendframework/zend-stdlib": "dev-master"
     },
     "require-dev": {
-        "zendframework/zend-console": "~2.1",
-        "zendframework/zend-mvc": "~2.1",
-        "phpunit/phpunit": "4.2.*"
+        "zendframework/zend-console": "dev-master",
+        "zendframework/zend-mvc": "dev-master",
+        "phpunit/phpunit": "dev-master"
     },
     "suggest": {
         "zendframework/zend-mvc": "For using the router in the UriPath strategy"
