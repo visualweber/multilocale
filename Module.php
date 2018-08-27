@@ -117,7 +117,9 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
     public function onPreRoute($e) {
         $app = $e->getTarget();
         $sm = $app->getServiceManager();
-        $sm->get('router')->setTranslator($sm->get('translator'));
+         if(($route = $sm->get('router')) && method_exists($route, 'setTranslator')):
+            $route->setTranslator($sm->get('translator'));
+        endif;
     }
 
 }
