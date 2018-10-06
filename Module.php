@@ -115,9 +115,12 @@ class Module implements Feature\AutoloaderProviderInterface, Feature\ConfigProvi
     }
 
     public function onPreRoute($e) {
-        $app = $e->getTarget();
-        $sm = $app->getServiceManager();
-        $sm->get('router')->setTranslator($sm->get('translator'));
+        if(php_sapi_name() !== 'cli'):
+            $app = $e->getTarget();
+            $sm = $app->getServiceManager();
+            $sm->get('router')->setTranslator($sm->get('translator'));
+        endif;
+       
     }
 
 }
